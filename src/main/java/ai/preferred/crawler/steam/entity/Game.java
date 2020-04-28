@@ -5,13 +5,15 @@ import java.util.ArrayList;
 public class Game {
     private String title;
     private String genre;
+    private String url;
     private ArrayList<String> types;
-    private double price;
-    private int discount;
+    private String price;
+    private String discount;
 
-    public Game (String title, String genre, ArrayList<String> types, double price, int discount) {
+    public Game (String title, String genre, String url, ArrayList<String> types, String price, String discount) {
         this.title = title;
         this.genre = genre;
+        this.url = url;
         this.types = types;
         this.price = price;
         this.discount = discount;
@@ -25,15 +27,19 @@ public class Game {
         return this.genre;
     }
 
+    public String getURL() {
+        return this.url;
+    }
+
     public ArrayList<String> getTypes() {
         return this.types;
     }
 
-    public double getPrice() {
+    public String getPrice() {
         return this.price;
     }
 
-    public int getDiscount() {
+    public String getDiscount() {
         return this.discount;
     }
 

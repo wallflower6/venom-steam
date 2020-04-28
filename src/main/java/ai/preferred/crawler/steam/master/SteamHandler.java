@@ -6,6 +6,7 @@ import ai.preferred.venom.Session;
 import ai.preferred.venom.Worker;
 import ai.preferred.venom.job.Scheduler;
 import ai.preferred.venom.request.Request;
+import ai.preferred.venom.request.VRequest;
 import ai.preferred.venom.response.VResponse;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,38 +25,15 @@ public class SteamHandler implements Handler {
         final String html = response.getHtml();
         final Document document = response.getJsoup();
 
-        // extract links
-        Elements links = document.select("#NewReleasesRows > a");
-        for (Element link : links) {
-            System.out.println(link.attr("abs:href"));
+        // parser class
+        final SteamParser.FinalResult finalResult = SteamParser.parse(response);
 
-            // extract title
-            String title = link.select("div.tab_item_content > div.tab_item_name").first().text();
-            System.out.println(title);
-
-            // extract final price
-            // with discount: discount_block tab_item_discount > discount_prices > discount_original_price > discount_final_price
-            // w/o discount: discount_block tab_item_discount no_discount > discount_prices > discount_final_price
-            String finalPrice = link.select("div.tab_item_discount > div > div.discount_final_price").first().text();
-            System.out.println(finalPrice);
-
-            // extract types
-            ArrayList<String> types = new ArrayList<>();
-            Elements top_tags = link.select("div.tab_item_content > div.tab_item_details > div");
-            for (Element top_tag : top_tags) {
-                types.add(top_tag.text());
-            }
-            System.out.println(types);
-
-            // extract discount
-            try {
-                String discount = link.select("div.tab_item_discount > div.discount_pct").first().text();
-                System.out.println(discount);
-            } catch (NullPointerException e) {
-                System.out.println(0);
-            }
-
-            System.out.println();
+        // Crawl another page if there's a next page
+        if (finalResult.getNextPage() != null) {
+            final String nextPageURL = finalResult.getNextPage();
+    
+            // Schedule the next page
+            scheduler.add(new VRequest(nextPageURL), this);
         }
     }
 }
