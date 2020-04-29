@@ -43,8 +43,8 @@ public class Game {
         return this.discount;
     }
 
-    // @Override
-    // public String toString() {
-    //   return ToStringBuilder.reflectionToString(this);
-    // }
+    @Override
+    public String toString() {
+        return "Title: " + this.title + "\n" + "Genre: " + this.genre + "\n" + "Price: " + this.price + "\n";
+    }
 }

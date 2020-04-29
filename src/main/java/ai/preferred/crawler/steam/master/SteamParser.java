@@ -19,7 +19,6 @@ public class SteamParser {
 
         // extract genre
         String genre = document.select("div.content_hub > h2.pageheader").first().text().split(" ")[1];
-        System.out.println(genre);
 
         // extract links
         Elements links = document.select("#NewReleasesRows > a");
@@ -54,55 +53,40 @@ public class SteamParser {
         return gameList;
     }
 
-    private static String parseNextPage(Document document) {
-        final Element nextPage = document.select("a.prev-next.test-pagination-next").first();
-        if (nextPage == null) {
-          return null;
-        }
-        return nextPage.attr("abs:href");
-    }
-
-    public static class FinalResult {
-
-        private final List<Game> games;
-    
-        private final String nextPage;
-    
-        private FinalResult(List<Game> games, String nextPage) {
-          this.games = games;
-          this.nextPage = nextPage;
-        }
-    
-        public List<Game> getGames() {
-          return games;
-        }
-    
-        public String getNextPage() {
-          return nextPage;
-        }
-    }
-
-    public static FinalResult parse(VResponse response) {
-        final Document document = response.getJsoup();
-        return new FinalResult(
-            parseListing(document),
-            parseNextPage(document)
-        );
-    }
-
     public static GenreResult parseGenre(Document document) {
-        return new GenreResult(parseListing(document));
+        return new GenreResult(parseListing(document), parseNextPage(document));
     }
 
     public static class GenreResult {
         private final List<Game> games;
+        private final String nextPage;
 
-        private GenreResult(List<Game> games) {
+        private GenreResult(List<Game> games, String nextPage) {
             this.games = games;
+            this.nextPage = nextPage;
         }
 
         public List<Game> getGames() {
             return games;
         }
+
+        public String getNextPage() {
+            return nextPage;
+        }
     }
+
+    private static String parseNextPage(Document document) {
+        String docURL = document.location();
+        // #p=0&tab=NewReleases
+        if (!docURL.contains("p=")) {
+            docURL += "#p=1&tab=NewReleases";
+        } else {
+            int currentPageNo = Integer.parseInt(Character.toString(docURL.split("#p=")[1].charAt(0)));
+            currentPageNo += 1;
+            docURL += "#p=" + currentPageNo + "&tab=NewReleases";
+        }
+
+        return docURL;
+    }
+
 }

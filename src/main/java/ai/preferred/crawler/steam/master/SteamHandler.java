@@ -29,9 +29,6 @@ public class SteamHandler implements Handler {
         final String html = response.getHtml();
         final Document document = response.getJsoup();
 
-        // intermediate_result = parseIntermediary
-        // finalResult = parseFinal(arg intermediate_result.getWhatever())
-
         Elements genres = document.select("#genre_flyout > div.popup_body > div.popup_menu > a[href~=/tags/]");
         for (Element genre : genres) {
             String genreURL = genre.attr("abs:href");
@@ -43,23 +40,16 @@ public class SteamHandler implements Handler {
             }
 
             SteamParser.GenreResult genreResult = SteamParser.parseGenre(genrePage);
-            System.out.println("-----------");
             List<Game> games = genreResult.getGames();
             for (Game game : games) {
-                System.out.println(game.getTitle());
+                System.out.println(game);
             }
-            System.out.println("-----------");
+
+            // if (genreResult.getNextPage() != null) {
+            //     final String nextPageURL = genreResult.getNextPage();
+            //     scheduler.add(new VRequest(nextPageURL), this);
+            //     //System.out.println(scheduler);
+            // }
         }
-
-        // // parser class
-        // final SteamParser.FinalResult finalResult = SteamParser.parse(response);
-
-        // // Crawl another page if there's a next page
-        // if (finalResult.getNextPage() != null) {
-        //     final String nextPageURL = finalResult.getNextPage();
-    
-        //     // Schedule the next page
-        //     scheduler.add(new VRequest(nextPageURL), this);
-        // }
     }
 }
