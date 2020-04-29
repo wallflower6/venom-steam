@@ -45,16 +45,16 @@ public class SteamCrawler {
     public static void main(String[] args) throws Exception {
         final List<Game> games = new ArrayList<>();
 
-        final String url = "https://store.steampowered.com/tags/en/Action/";
+        final String url = "https://store.steampowered.com/";
         final Fetcher fetcher = createFetcher();
         Session session = createSession(games);
 
         try (Crawler crawler = createCrawler(fetcher, session).start()) {
-        LOGGER.info("Starting crawler...");
-        crawler.getScheduler().add(new VRequest(url), new SteamHandler());
+            LOGGER.info("Starting crawler...");
+            crawler.getScheduler().add(new VRequest(url), new SteamHandler());
         } 
         catch (Exception e) {
-        LOGGER.error("Could not run crawler: ", e);
+            LOGGER.error("Could not run crawler: ", e);
         }
     }
 }

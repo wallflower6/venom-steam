@@ -14,16 +14,12 @@ public class SteamParser {
         throw new UnsupportedOperationException();
     }
 
-    public static FinalResult parse(VResponse response) {
-        final Document document = response.getJsoup();
-        return new FinalResult(
-            parseListing(document),
-            parseNextPage(document)
-        );
-    }
-
     static List<Game> parseListing(Document document) {
         final ArrayList<Game> gameList = new ArrayList<>();
+
+        // extract genre
+        String genre = document.select("div.content_hub > h2.pageheader").first().text().split(" ")[1];
+        System.out.println(genre);
 
         // extract links
         Elements links = document.select("#NewReleasesRows > a");
@@ -52,9 +48,9 @@ public class SteamParser {
             } catch (NullPointerException e) {
             }
 
-            gameList.add(new Game(title, "Action", gameURL, types, finalPrice, discount));
+            gameList.add(new Game(title, genre, gameURL, types, finalPrice, discount));
         }
-        System.out.println(gameList);
+
         return gameList;
     }
 
@@ -83,6 +79,30 @@ public class SteamParser {
     
         public String getNextPage() {
           return nextPage;
+        }
+    }
+
+    public static FinalResult parse(VResponse response) {
+        final Document document = response.getJsoup();
+        return new FinalResult(
+            parseListing(document),
+            parseNextPage(document)
+        );
+    }
+
+    public static GenreResult parseGenre(Document document) {
+        return new GenreResult(parseListing(document));
+    }
+
+    public static class GenreResult {
+        private final List<Game> games;
+
+        private GenreResult(List<Game> games) {
+            this.games = games;
+        }
+
+        public List<Game> getGames() {
+            return games;
         }
     }
 }
