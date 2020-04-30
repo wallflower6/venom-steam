@@ -18,7 +18,11 @@ public class SteamParser {
         final ArrayList<Game> gameList = new ArrayList<>();
 
         // extract genre
-        String genre = document.select("div.content_hub > h2.pageheader").first().text().split(" ")[1];
+        String[] genreHeader = document.select("div.content_hub > h2.pageheader").first().text().split(" ");
+        String genre = genreHeader[1];
+        if (genre.equals("Massively")) {
+            genre = genre + " " + genreHeader[2];
+        }
 
         // extract links
         Elements links = document.select("#NewReleasesRows > a");
@@ -82,10 +86,14 @@ public class SteamParser {
             docURL += "#p=1&tab=NewReleases";
         } else {
             int currentPageNo = Integer.parseInt(Character.toString(docURL.split("#p=")[1].charAt(0)));
-            currentPageNo += 1;
-            docURL += "#p=" + currentPageNo + "&tab=NewReleases";
+            if (currentPageNo < 5) {
+                currentPageNo += 1;
+                docURL = docURL.split("#p=")[0] + "#p=" + currentPageNo + "&tab=NewReleases";
+            } else {
+                docURL = null;
+            }
         }
-
+        //System.out.println(docURL);
         return docURL;
     }
 
