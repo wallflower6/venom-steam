@@ -44,12 +44,6 @@ public class SteamHandler implements Handler {
             for (Game game : games) {
                 System.out.println(game);
             }
-
-            // if (genreResult.getNextPage() != null) {
-            //     final String nextPageURL = genreResult.getNextPage();
-            //     scheduler.add(new VRequest(nextPageURL), this);
-            //     //System.out.println(scheduler);
-            // }
         }
     }
 }

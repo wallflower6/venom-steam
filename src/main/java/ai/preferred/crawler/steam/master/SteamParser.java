@@ -58,43 +58,18 @@ public class SteamParser {
     }
 
     public static GenreResult parseGenre(Document document) {
-        return new GenreResult(parseListing(document), parseNextPage(document));
+        return new GenreResult(parseListing(document));
     }
 
     public static class GenreResult {
         private final List<Game> games;
-        private final String nextPage;
 
-        private GenreResult(List<Game> games, String nextPage) {
+        private GenreResult(List<Game> games) {
             this.games = games;
-            this.nextPage = nextPage;
         }
 
         public List<Game> getGames() {
             return games;
         }
-
-        public String getNextPage() {
-            return nextPage;
-        }
     }
-
-    private static String parseNextPage(Document document) {
-        String docURL = document.location();
-        // #p=0&tab=NewReleases
-        if (!docURL.contains("p=")) {
-            docURL += "#p=1&tab=NewReleases";
-        } else {
-            int currentPageNo = Integer.parseInt(Character.toString(docURL.split("#p=")[1].charAt(0)));
-            if (currentPageNo < 5) {
-                currentPageNo += 1;
-                docURL = docURL.split("#p=")[0] + "#p=" + currentPageNo + "&tab=NewReleases";
-            } else {
-                docURL = null;
-            }
-        }
-        //System.out.println(docURL);
-        return docURL;
-    }
-
 }
