@@ -10,7 +10,6 @@ import ai.preferred.venom.validator.*;
 import ai.preferred.venom.Session;
 import ai.preferred.venom.request.VRequest;
 
-
 public class SteamCrawler {
     // to log to console
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(SteamCrawler.class);
